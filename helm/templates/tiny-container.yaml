@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: 
+  name: tiny-container
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    path: helm
+    repoURL: https://github.com/puszczyk16/tiny-container.git
+    targetRevision: HEAD
+    helm:
+      values: |
+        image:
+          tag: 0.21
+        ingress:
+          host: tiny-container.192.168.99.100.nip.io
+        version:  v3
+  destination:
+    namespace: production
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
